@@ -501,6 +501,78 @@
       font-style: italic;
     }
 
+    /* Developer Information Styles */
+    .developer-info {
+      margin-top: 40px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--secondary);
+      text-align: center;
+    }
+
+    .developer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .developer-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .developer-details {
+      text-align: left;
+      max-width: 500px;
+    }
+
+    .developer-details h3 {
+      color: var(--secondary);
+      margin-bottom: 5px;
+    }
+
+    .developer-details p {
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .developer-role {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .bottom-nav-btn {
+      padding: 8px 15px;
+      background: var(--primary);
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .bottom-nav-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -545,6 +617,19 @@
 
       .action-buttons {
         flex-direction: column;
+      }
+
+      .developer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .developer-details {
+        text-align: center;
+      }
+
+      .bottom-nav {
+        flex-wrap: wrap;
       }
     }
   </style>
@@ -704,6 +789,16 @@
           </div>
           <button class="btn btn-block" onclick="uploadLogo()">Set System Logo</button>
         </div>
+
+        <div class="action-card">
+          <h3><i class="fas fa-user"></i> Developer Photo</h3>
+          <div class="form-group">
+            <label for="developerPhotoUpload">Upload Developer Photo</label>
+            <input type="file" id="developerPhotoUpload" class="file-input" accept="image/*">
+            <img id="developerPhotoPreview" class="photo-preview" alt="Developer Photo Preview">
+          </div>
+          <button class="btn btn-block" onclick="uploadDeveloperPhoto()">Set Developer Photo</button>
+        </div>
       </div>
       
       <h3><i class="fas fa-users"></i> Voter Management</h3>
@@ -734,6 +829,26 @@
         <button class="btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
       </div>
     </section>
+
+    <!-- Developer Information Section -->
+    <section class="developer-info">
+      <h2>System Developer</h2>
+      <div class="developer-content">
+        <img id="developerPhotoDisplay" class="developer-photo" src="" alt="Developer Photo">
+        <div class="developer-details">
+          <h3>Otieno Celestino</h3>
+          <p class="developer-role">IT and Information Analyst</p>
+          <p>This voting system was designed and developed by Otieno Celestino to streamline the election process for Lukenya's British Curriculum Student Council.</p>
+          <p>The system ensures secure, transparent, and efficient elections with real-time results tracking and comprehensive administrative controls.</p>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <a href="#" class="bottom-nav-btn" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a>
+        <a href="#" class="bottom-nav-btn" onclick="showSection('studentLogin')"><i class="fas fa-user-graduate"></i> Student Login</a>
+        <a href="#" class="bottom-nav-btn" onclick="showSection('staffLogin')"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>
+        <a href="#" class="bottom-nav-btn" onclick="showSection('adminLogin')"><i class="fas fa-user-shield"></i> Admin Login</a>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -754,6 +869,7 @@
     let maxVotes = {}; // Track max votes for progress bars
     let currentVoter = null; // Track current voter
     let systemLogo = null; // System logo
+    let developerPhoto = null; // Developer photo
     let loginAttempts = []; // Track all login attempts
 
     // Initialize data structures
@@ -770,6 +886,7 @@
       const savedVotes = localStorage.getItem('lukenyaVotes');
       const savedMaxVotes = localStorage.getItem('lukenyaMaxVotes');
       const savedLogo = localStorage.getItem('lukenyaLogo');
+      const savedDeveloperPhoto = localStorage.getItem('lukenyaDeveloperPhoto');
       const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
       
       if (savedVoters) voters = JSON.parse(savedVoters);
@@ -781,6 +898,10 @@
         document.getElementById('systemLogo').src = systemLogo;
         document.getElementById('systemLogo').style.display = 'block';
         document.getElementById('defaultLogo').style.display = 'none';
+      }
+      if (savedDeveloperPhoto) {
+        developerPhoto = savedDeveloperPhoto;
+        document.getElementById('developerPhotoDisplay').src = developerPhoto;
       }
       if (savedLoginAttempts) loginAttempts = JSON.parse(savedLoginAttempts);
     }
@@ -794,6 +915,9 @@
       localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
       if (systemLogo) {
         localStorage.setItem('lukenyaLogo', systemLogo);
+      }
+      if (developerPhoto) {
+        localStorage.setItem('lukenyaDeveloperPhoto', developerPhoto);
       }
     }
 
@@ -818,12 +942,14 @@
       });
       
       const targetSection = document.getElementById(id);
-      targetSection.classList.remove('hidden');
-      
-      // Add fade-in effect after a brief delay
-      setTimeout(() => {
-        targetSection.classList.add('fade-in');
-      }, 50);
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+        
+        // Add fade-in effect after a brief delay
+        setTimeout(() => {
+          targetSection.classList.add('fade-in');
+        }, 50);
+      }
     }
 
     // Show notification
@@ -1028,6 +1154,19 @@
             reader.readAsDataURL(file);
           }
         });
+
+        // Preview for developer photo
+        document.getElementById('developerPhotoUpload').addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              document.getElementById('developerPhotoPreview').src = event.target.result;
+              document.getElementById('developerPhotoPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
         
         setTimeout(() => showSection('adminPanel'), 1000);
       } else {
@@ -1146,6 +1285,30 @@
         document.getElementById('logoPreview').style.display = 'none';
       };
       reader.readAsDataURL(logoFile);
+    }
+
+    // Upload developer photo
+    function uploadDeveloperPhoto() {
+      const photoInput = document.getElementById('developerPhotoUpload');
+      const photoFile = photoInput.files[0];
+      
+      if (!photoFile) {
+        showNotification('Please select a photo file', true);
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        developerPhoto = event.target.result;
+        document.getElementById('developerPhotoDisplay').src = developerPhoto;
+        saveData();
+        showNotification('Developer photo updated successfully');
+        
+        // Clear form
+        photoInput.value = '';
+        document.getElementById('developerPhotoPreview').style.display = 'none';
+      };
+      reader.readAsDataURL(photoFile);
     }
 
     // Show results with visual progress bars
