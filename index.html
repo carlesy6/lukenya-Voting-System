@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lukenya Voting System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --warning: #f8961e;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --gradient: linear-gradient(135deg, #4361ee 0%, #7209b7 100%);
+      --gradient-light: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f4f4f4 0%, #e6e9f0 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--dark);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .logo {
+      max-width: 150px;
+      max-height: 100px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .logo i {
+      font-size: 2.5rem;
+      color: var(--primary);
+    }
+
+    h1 {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--secondary);
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 25px;
+      margin-bottom: 25px;
+      transition: var(--transition);
+      animation: slideUp 0.5s ease;
+      border-left: 4px solid var(--primary);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    h2 {
+      color: var(--secondary);
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      border-bottom: 2px solid var(--light);
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+
+    h4 {
+      color: var(--dark);
+      margin: 15px 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+
+    .file-input {
+      padding: 8px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+      background: var(--success);
+    }
+
+    .btn-success:hover {
+      background: #3ab0d9;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: #e01a6f;
+    }
+
+    .btn-warning {
+      background: var(--warning);
+    }
+
+    .btn-warning:hover {
+      background: #e8871b;
+    }
+
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .user-type-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .user-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: pointer;
+      border-top: 4px solid var(--primary);
+    }
+
+    .user-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      background: var(--gradient-light);
+      color: white;
+    }
+
+    .user-card:hover i {
+      color: white;
+    }
+
+    .user-card i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+    }
+
+    .user-card h3 {
+      margin-bottom: 10px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .result-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--success);
+    }
+
+    .result-card h4 {
+      color: var(--primary);
+      border-bottom: 1px solid var(--light);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .candidate-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .vote-count {
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #eee;
+      border-radius: 4px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: var(--gradient);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .admin-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .action-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid var(--warning);
+    }
+
+    .action-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background: var(--success);
+      color: white;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      animation: slideInRight 0.5s ease;
+    }
+
+    .notification.error {
+      background: var(--danger);
+    }
+
+    .candidate-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      margin-right: 15px;
+    }
+
+    .candidate-with-photo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .candidate-info {
+      flex: 1;
+    }
+
+    .candidate-option {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .candidate-option:hover {
+      border-color: var(--primary);
+      background-color: #f8f9fa;
+    }
+
+    .candidate-option.selected {
+      border-color: var(--success);
+      background-color: #e8f5e8;
+    }
+
+    .candidate-option input[type="radio"] {
+      margin-right: 10px;
+      width: auto;
+    }
+
+    .photo-preview {
+      max-width: 150px;
+      max-height: 150px;
+      margin-top: 10px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .status-voted {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .status-not-voted {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .login-attempts-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .login-attempts-table th, .login-attempts-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .login-attempts-table th {
+      background-color: var(--light);
+      color: var(--dark);
+    }
+
+    .login-attempts-table tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .status-success {
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    .status-failed {
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .voter-table, .candidate-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .voter-table th, .voter-table td,
+    .candidate-table th, .candidate-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .voter-table th, .candidate-table th {
+      background-color: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .voter-table tr:hover, .candidate-table tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    .voter-section {
+      margin-bottom: 30px;
+    }
+
+    .voter-section h4 {
+      color: var(--secondary);
+      border-bottom: 2px solid var(--light);
+      padding-bottom: 10px;
+      margin-top: 20px;
+    }
+
+    .voter-count {
+      font-size: 0.9rem;
+      color: var(--dark);
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .user-type-cards, .results-grid, .admin-actions {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .candidate-with-photo {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .candidate-photo {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+
+      .voter-table, .candidate-table {
+        font-size: 0.85rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-container">
+        <img id="systemLogo" class="logo" src="" alt="System Logo" style="display: none;">
+        <i id="defaultLogo" class="fas fa-vote-yea"></i>
+        <h1>Lukenya Voting System</h1>
+      </div>
+      <p class="subtitle">British Curriculum Student Council Elections</p>
+    </header>
+
+    <!-- Home Section -->
+    <section id="home" class="card fade-in">
+      <h2>Welcome to the Voting System</h2>
+      <p>Please select your role to proceed:</p>
+      
+      <div class="user-type-cards">
+        <div class="user-card" onclick="showSection('studentLogin')">
+          <i class="fas fa-user-graduate"></i>
+          <h3>Student Voter</h3>
+          <p>Vote as a student</p>
+        </div>
+        
+        <div class="user-card" onclick="showSection('staffLogin')">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <h3>Staff Voter</h3>
+          <p>Vote as a staff member</p>
+        </div>
+        
+        <div class="user-card" onclick="showSection('adminLogin')">
+          <i class="fas fa-user-shield"></i>
+          <h3>Administrator</h3>
+          <p>Admin dashboard</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Student Login Section -->
+    <section id="studentLogin" class="card hidden">
+      <h2><i class="fas fa-user-graduate"></i> Student Login</h2>
+      <div class="form-group">
+        <label for="sName">First Name</label>
+        <input type="text" id="sName" placeholder="Enter your first name">
+      </div>
+      <div class="form-group">
+        <label for="sAdm">Admission Number</label>
+        <input type="text" id="sAdm" placeholder="Enter your admission number">
+      </div>
+      <div class="form-group">
+        <label for="sClass">Class</label>
+        <input type="text" id="sClass" placeholder="Enter your class">
+      </div>
+      <button class="btn btn-block" onclick="verifyStudent()">Login to Vote</button>
+      <div class="nav-buttons">
+        <button class="btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+      </div>
+    </section>
+
+    <!-- Staff Login Section -->
+    <section id="staffLogin" class="card hidden">
+      <h2><i class="fas fa-chalkboard-teacher"></i> Staff Login</h2>
+      <div class="form-group">
+        <label for="tName">First Name</label>
+        <input type="text" id="tName" placeholder="Enter your first name">
+      </div>
+      <div class="form-group">
+        <label for="tID">Staff ID</label>
+        <input type="text" id="tID" placeholder="Enter your staff ID">
+      </div>
+      <button class="btn btn-block" onclick="verifyStaff()">Login to Vote</button>
+      <div class="nav-buttons">
+        <button class="btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+      </div>
+    </section>
+
+    <!-- Vote Section -->
+    <section id="voteSection" class="card hidden">
+      <h2><i class="fas fa-vote-yea"></i> Cast Your Vote</h2>
+      <p>Please select your preferred candidate for each position:</p>
+      <div id="voteForm"></div>
+      <button class="btn btn-success btn-block" onclick="submitVote()"><i class="fas fa-paper-plane"></i> Submit Vote</button>
+      <div class="nav-buttons">
+        <button class="btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+      </div>
+    </section>
+
+    <!-- Admin Login Section -->
+    <section id="adminLogin" class="card hidden">
+      <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
+      <div class="form-group">
+        <label for="adminPass">Administrator Password</label>
+        <input type="password" id="adminPass" placeholder="Enter administrator password">
+      </div>
+      <button class="btn btn-block" onclick="adminAccess()">Login to Admin Panel</button>
+      <div class="nav-buttons">
+        <button class="btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+      </div>
+    </section>
+
+    <!-- Admin Panel Section -->
+    <section id="adminPanel" class="card hidden">
+      <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+      
+      <div class="admin-actions">
+        <div class="action-card">
+          <h3><i class="fas fa-user-plus"></i> Register Voter</h3>
+          <div class="form-group">
+            <label for="voterType">Voter Type</label>
+            <select id="voterType">
+              <option value="student">Student</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="voterName">First Name</label>
+            <input type="text" id="voterName" placeholder="Enter first name">
+          </div>
+          <div class="form-group">
+            <label for="voterID">ID Number</label>
+            <input type="text" id="voterID" placeholder="Admission No / Staff ID">
+          </div>
+          <div class="form-group" id="classField">
+            <label for="voterClass">Class</label>
+            <input type="text" id="voterClass" placeholder="Enter class (students only)">
+          </div>
+          <button class="btn btn-block" onclick="registerVoter()">Register Voter</button>
+        </div>
+        
+        <div class="action-card">
+          <h3><i class="fas fa-user-tie"></i> Add Candidate</h3>
+          <div class="form-group">
+            <label for="positionSelect">Position</label>
+            <select id="positionSelect"></select>
+          </div>
+          <div class="form-group">
+            <label for="candidateName">Candidate Name</label>
+            <input type="text" id="candidateName" placeholder="Enter candidate name">
+          </div>
+          <div class="form-group">
+            <label for="candidatePhoto">Candidate Photo</label>
+            <input type="file" id="candidatePhoto" class="file-input" accept="image/*">
+            <img id="photoPreview" class="photo-preview" alt="Photo Preview">
+          </div>
+          <button class="btn btn-block" onclick="addCandidate()">Add Candidate</button>
+        </div>
+        
+        <div class="action-card">
+          <h3><i class="fas fa-image"></i> System Logo</h3>
+          <div class="form-group">
+            <label for="logoUpload">Upload System Logo</label>
+            <input type="file" id="logoUpload" class="file-input" accept="image/*">
+            <img id="logoPreview" class="photo-preview" alt="Logo Preview">
+          </div>
+          <button class="btn btn-block" onclick="uploadLogo()">Set System Logo</button>
+        </div>
+      </div>
+      
+      <h3><i class="fas fa-users"></i> Voter Management</h3>
+      <button class="btn" onclick="showRegistered()">Show Registered Voters</button>
+      <div id="registeredVoters" style="margin-top: 15px;"></div>
+      
+      <h3><i class="fas fa-user-tie"></i> Candidate Management</h3>
+      <button class="btn" onclick="showCandidates()">Show Candidates</button>
+      <div id="candidateManagement" style="margin-top: 15px;"></div>
+      
+      <h3><i class="fas fa-chart-bar"></i> Election Results</h3>
+      <button class="btn" onclick="showResults()">Show Results</button>
+      <div id="results" class="results-grid" style="margin-top: 15px;"></div>
+      
+      <h3><i class="fas fa-history"></i> Login Attempts</h3>
+      <button class="btn" onclick="showLoginAttempts()">Show Login Attempts</button>
+      <div id="loginAttempts" style="margin-top: 15px;"></div>
+      
+      <h3><i class="fas fa-download"></i> Data Export</h3>
+      <div class="btn-group">
+        <button class="btn" onclick="downloadCSV('voters')">Download Voters CSV</button>
+        <button class="btn" onclick="downloadCSV('candidates')">Download Candidates CSV</button>
+        <button class="btn" onclick="downloadCSV('results')">Download Results CSV</button>
+        <button class="btn" onclick="downloadPDF()">Download Results PDF</button>
+      </div>
+      
+      <div class="nav-buttons">
+        <button class="btn" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Define positions
+    const positions = [
+      "Headboy", "Headgirl", "Boys' Dorm Prefect", "Girls' Dorm Prefect", 
+      "Boys' Entertainment", "Girls' Entertainment", "Boys' Sports and Co-curriculum", 
+      "Girls' Sports and Co-curriculum", "Boys' Dining", "Girls' Dining", 
+      "Boys' Chapel", "Girls' Chapel", "KS3 Prefect", "KS4 Prefect", 
+      "Girls' Academic Prefect", "Boys' Academic Prefect", "Principal's Award", 
+      "Library Prefect", "Laboratory Prefect", "Environmental Prefect"
+    ];
+
+    // Initialize data storage
+    let voters = { student: [], staff: [] };
+    let candidates = {};
+    let votes = {};
+    let maxVotes = {}; // Track max votes for progress bars
+    let currentVoter = null; // Track current voter
+    let systemLogo = null; // System logo
+    let loginAttempts = []; // Track all login attempts
+
+    // Initialize data structures
+    positions.forEach(pos => {
+      candidates[pos] = [];
+      votes[pos] = {};
+      maxVotes[pos] = 0;
+    });
+
+    // Load data from localStorage if available
+    function loadData() {
+      const savedVoters = localStorage.getItem('lukenyaVoters');
+      const savedCandidates = localStorage.getItem('lukenyaCandidates');
+      const savedVotes = localStorage.getItem('lukenyaVotes');
+      const savedMaxVotes = localStorage.getItem('lukenyaMaxVotes');
+      const savedLogo = localStorage.getItem('lukenyaLogo');
+      const savedLoginAttempts = localStorage.getItem('lukenyaLoginAttempts');
+      
+      if (savedVoters) voters = JSON.parse(savedVoters);
+      if (savedCandidates) candidates = JSON.parse(savedCandidates);
+      if (savedVotes) votes = JSON.parse(savedVotes);
+      if (savedMaxVotes) maxVotes = JSON.parse(savedMaxVotes);
+      if (savedLogo) {
+        systemLogo = savedLogo;
+        document.getElementById('systemLogo').src = systemLogo;
+        document.getElementById('systemLogo').style.display = 'block';
+        document.getElementById('defaultLogo').style.display = 'none';
+      }
+      if (savedLoginAttempts) loginAttempts = JSON.parse(savedLoginAttempts);
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      localStorage.setItem('lukenyaVoters', JSON.stringify(voters));
+      localStorage.setItem('lukenyaCandidates', JSON.stringify(candidates));
+      localStorage.setItem('lukenyaVotes', JSON.stringify(votes));
+      localStorage.setItem('lukenyaMaxVotes', JSON.stringify(maxVotes));
+      localStorage.setItem('lukenyaLoginAttempts', JSON.stringify(loginAttempts));
+      if (systemLogo) {
+        localStorage.setItem('lukenyaLogo', systemLogo);
+      }
+    }
+
+    // Record login attempt
+    function recordLoginAttempt(userType, name, id, status) {
+      const attempt = {
+        timestamp: new Date().toLocaleString(),
+        userType,
+        name,
+        id,
+        status
+      };
+      loginAttempts.unshift(attempt); // Add to beginning of array
+      saveData();
+    }
+
+    // Show/hide sections with animation
+    function showSection(id) {
+      document.querySelectorAll('.card').forEach(s => {
+        s.classList.add('hidden');
+        s.classList.remove('fade-in');
+      });
+      
+      const targetSection = document.getElementById(id);
+      targetSection.classList.remove('hidden');
+      
+      // Add fade-in effect after a brief delay
+      setTimeout(() => {
+        targetSection.classList.add('fade-in');
+      }, 50);
+    }
+
+    // Show notification
+    function showNotification(message, isError = false) {
+      const notification = document.createElement('div');
+      notification.className = `notification ${isError ? 'error' : ''}`;
+      notification.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+      
+      document.body.appendChild(notification);
+      
+      // Remove notification after 3 seconds
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    // Verify student login
+    function verifyStudent() {
+      const name = document.getElementById('sName').value.trim();
+      const adm = document.getElementById('sAdm').value.trim();
+      const cls = document.getElementById('sClass').value.trim();
+      
+      if (!name || !adm || !cls) {
+        showNotification('Please fill in all fields', true);
+        recordLoginAttempt('student', name, adm, 'failed');
+        return;
+      }
+      
+      const found = voters.student.find(v => v.name === name && v.id === adm && v.class === cls);
+      if (found) {
+        if (found.hasVoted) {
+          showNotification('You have already voted. Each voter can only vote once.', true);
+          recordLoginAttempt('student', name, adm, 'failed');
+          return;
+        }
+        
+        currentVoter = { type: 'student', id: adm };
+        showNotification('Login successful!');
+        recordLoginAttempt('student', name, adm, 'success');
+        setTimeout(() => startVoting(), 1000);
+      } else {
+        showNotification('Student not registered. Please contact administrator.', true);
+        recordLoginAttempt('student', name, adm, 'failed');
+      }
+    }
+
+    // Verify staff login
+    function verifyStaff() {
+      const name = document.getElementById('tName').value.trim();
+      const id = document.getElementById('tID').value.trim();
+      
+      if (!name || !id) {
+        showNotification('Please fill in all fields', true);
+        recordLoginAttempt('staff', name, id, 'failed');
+        return;
+      }
+      
+      const found = voters.staff.find(v => v.name === name && v.id === id);
+      if (found) {
+        if (found.hasVoted) {
+          showNotification('You have already voted. Each voter can only vote once.', true);
+          recordLoginAttempt('staff', name, id, 'failed');
+          return;
+        }
+        
+        currentVoter = { type: 'staff', id: id };
+        showNotification('Login successful!');
+        recordLoginAttempt('staff', name, id, 'success');
+        setTimeout(() => startVoting(), 1000);
+      } else {
+        showNotification('Staff not registered. Please contact administrator.', true);
+        recordLoginAttempt('staff', name, id, 'failed');
+      }
+    }
+
+    // Start voting process
+    function startVoting() {
+      showSection('voteSection');
+      const form = document.getElementById('voteForm');
+      form.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos].length > 0) {
+          const div = document.createElement('div');
+          div.className = 'form-group';
+          
+          let candidatesHTML = `<label>${pos}</label>`;
+          candidates[pos].forEach(candidate => {
+            candidatesHTML += `
+              <div class="candidate-option" onclick="selectCandidate(this, '${pos}')">
+                <input type="radio" name="${pos}" value="${candidate.name}" style="width: auto;">
+                <div class="candidate-with-photo">
+                  ${candidate.photo ? `<img src="${candidate.photo}" class="candidate-photo" alt="${candidate.name}">` : ''}
+                  <div class="candidate-info">
+                    <strong>${candidate.name}</strong>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          div.innerHTML = candidatesHTML;
+          form.appendChild(div);
+        }
+      });
+    }
+
+    // Select candidate
+    function selectCandidate(element, position) {
+      // Deselect all options for this position
+      const allOptions = document.querySelectorAll(`input[name="${position}"]`);
+      allOptions.forEach(opt => {
+        opt.parentElement.classList.remove('selected');
+      });
+      
+      // Select the clicked option
+      element.classList.add('selected');
+      element.querySelector('input[type="radio"]').checked = true;
+    }
+
+    // Submit vote
+    function submitVote() {
+      let hasVoted = false;
+      
+      positions.forEach(pos => {
+        const selectedOption = document.querySelector(`input[name="${pos}"]:checked`);
+        if (selectedOption) {
+          const selectedCandidate = selectedOption.value;
+          votes[pos][selectedCandidate] = (votes[pos][selectedCandidate] || 0) + 1;
+          
+          // Update max votes for this position
+          if (votes[pos][selectedCandidate] > maxVotes[pos]) {
+            maxVotes[pos] = votes[pos][selectedCandidate];
+          }
+          
+          hasVoted = true;
+        }
+      });
+      
+      if (hasVoted) {
+        // Mark voter as having voted
+        if (currentVoter.type === 'student') {
+          const voterIndex = voters.student.findIndex(v => v.id === currentVoter.id);
+          if (voterIndex !== -1) {
+            voters.student[voterIndex].hasVoted = true;
+          }
+        } else {
+          const voterIndex = voters.staff.findIndex(v => v.id === currentVoter.id);
+          if (voterIndex !== -1) {
+            voters.staff[voterIndex].hasVoted = true;
+          }
+        }
+        
+        saveData();
+        showNotification('Vote submitted successfully!');
+        setTimeout(() => showSection('home'), 1500);
+      } else {
+        showNotification('Please vote for at least one position', true);
+      }
+    }
+
+    // Admin access
+    function adminAccess() {
+      const password = document.getElementById('adminPass').value;
+      
+      if (password === "Luk123enya") {
+        showNotification('Admin access granted');
+        recordLoginAttempt('admin', 'Administrator', 'N/A', 'success');
+        
+        // Populate position dropdown
+        const posSel = document.getElementById('positionSelect');
+        posSel.innerHTML = positions.map(p => `<option value="${p}">${p}</option>`).join('');
+        
+        // Show/hide class field based on voter type
+        document.getElementById('voterType').addEventListener('change', function() {
+          document.getElementById('classField').style.display = 
+            this.value === 'student' ? 'block' : 'none';
+        });
+        
+        // Preview for candidate photo
+        document.getElementById('candidatePhoto').addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              document.getElementById('photoPreview').src = event.target.result;
+              document.getElementById('photoPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+        
+        // Preview for logo
+        document.getElementById('logoUpload').addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              document.getElementById('logoPreview').src = event.target.result;
+              document.getElementById('logoPreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+        
+        setTimeout(() => showSection('adminPanel'), 1000);
+      } else {
+        showNotification('Wrong password. Access denied.', true);
+        recordLoginAttempt('admin', 'Unknown', 'N/A', 'failed');
+      }
+    }
+
+    // Register voter
+    function registerVoter() {
+      const type = document.getElementById('voterType').value;
+      const name = document.getElementById('voterName').value.trim();
+      const id = document.getElementById('voterID').value.trim();
+      const cls = document.getElementById('voterClass').value.trim();
+      
+      if (!name || !id) {
+        showNotification('Please fill in all required fields', true);
+        return;
+      }
+      
+      if (type === "student" && !cls) {
+        showNotification('Class is required for students', true);
+        return;
+      }
+      
+      // Check if voter already exists
+      const existingVoter = voters[type].find(v => v.id === id);
+      if (existingVoter) {
+        showNotification('Voter with this ID is already registered', true);
+        return;
+      }
+      
+      if (type === "student") {
+        voters.student.push({ name, id, class: cls, hasVoted: false });
+      } else {
+        voters.staff.push({ name, id, hasVoted: false });
+      }
+      
+      saveData();
+      showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} registered successfully`);
+      
+      // Clear form
+      document.getElementById('voterName').value = '';
+      document.getElementById('voterID').value = '';
+      document.getElementById('voterClass').value = '';
+    }
+
+    // Add candidate
+    function addCandidate() {
+      const pos = document.getElementById('positionSelect').value;
+      const name = document.getElementById('candidateName').value.trim();
+      const photoInput = document.getElementById('candidatePhoto');
+      const photoFile = photoInput.files[0];
+      
+      if (!name) {
+        showNotification('Please enter a candidate name', true);
+        return;
+      }
+      
+      // Check if candidate already exists for this position
+      const existingCandidate = candidates[pos].find(c => c.name === name);
+      if (existingCandidate) {
+        showNotification('Candidate already exists for this position', true);
+        return;
+      }
+      
+      // Process photo if provided
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const candidate = { name, photo: event.target.result };
+          candidates[pos].push(candidate);
+          votes[pos][name] = 0;
+          saveData();
+          showNotification(`Candidate "${name}" added to ${pos}`);
+          
+          // Clear form
+          document.getElementById('candidateName').value = '';
+          photoInput.value = '';
+          document.getElementById('photoPreview').style.display = 'none';
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        const candidate = { name, photo: null };
+        candidates[pos].push(candidate);
+        votes[pos][name] = 0;
+        saveData();
+        showNotification(`Candidate "${name}" added to ${pos}`);
+        
+        // Clear form
+        document.getElementById('candidateName').value = '';
+      }
+    }
+
+    // Upload system logo
+    function uploadLogo() {
+      const logoInput = document.getElementById('logoUpload');
+      const logoFile = logoInput.files[0];
+      
+      if (!logoFile) {
+        showNotification('Please select a logo file', true);
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        systemLogo = event.target.result;
+        document.getElementById('systemLogo').src = systemLogo;
+        document.getElementById('systemLogo').style.display = 'block';
+        document.getElementById('defaultLogo').style.display = 'none';
+        saveData();
+        showNotification('System logo updated successfully');
+        
+        // Clear form
+        logoInput.value = '';
+        document.getElementById('logoPreview').style.display = 'none';
+      };
+      reader.readAsDataURL(logoFile);
+    }
+
+    // Show results with visual progress bars
+    function showResults() {
+      const res = document.getElementById('results');
+      res.innerHTML = '';
+      
+      positions.forEach(pos => {
+        if (candidates[pos].length > 0) {
+          const resultCard = document.createElement('div');
+          resultCard.className = 'result-card';
+          
+          let candidatesHTML = '';
+          candidates[pos].forEach(candidate => {
+            const voteCount = votes[pos][candidate.name] || 0;
+            const percentage = maxVotes[pos] > 0 ? (voteCount / maxVotes[pos]) * 100 : 0;
+            
+            candidatesHTML += `
+              <div class="candidate-with-photo">
+                ${candidate.photo ? `<img src="${candidate.photo}" class="candidate-photo" alt="${candidate.name}">` : ''}
+                <div class="candidate-info">
+                  <div class="candidate-item">
+                    <span>${candidate.name}</span>
+                    <span class="vote-count">${voteCount} votes</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: ${percentage}%"></div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          resultCard.innerHTML = `
+            <h4>${pos}</h4>
+            ${candidatesHTML}
+          `;
+          
+          res.appendChild(resultCard);
+        }
+      });
+    }
+
+    // Show registered voters with separate tables for students and staff
+    function showRegistered() {
+      const reg = document.getElementById('registeredVoters');
+      reg.innerHTML = '';
+      
+      if (voters.student.length === 0 && voters.staff.length === 0) {
+        reg.innerHTML = '<p>No voters registered yet.</p>';
+        return;
+      }
+      
+      // Create student voter section
+      if (voters.student.length > 0) {
+        const studentSection = document.createElement('div');
+        studentSection.className = 'voter-section';
+        
+        studentSection.innerHTML = `
+          <h4><i class="fas fa-user-graduate"></i> Student Voters</h4>
+          <div class="voter-count">Total: ${voters.student.length} students</div>
+        `;
+        
+        let studentTableHTML = `
+          <table class="voter-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Admission No</th>
+                <th>Class</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        voters.student.forEach((v, index) => {
+          const status = v.hasVoted ? 
+            '<span class="status-badge status-voted">VOTED</span>' : 
+            '<span class="status-badge status-not-voted">NOT VOTED</span>';
+          studentTableHTML += `
+            <tr>
+              <td>${v.name}</td>
+              <td>${v.id}</td>
+              <td>${v.class}</td>
+              <td>${status}</td>
+              <td class="action-buttons">
+                <button class="btn btn-warning btn-sm" onclick="editVoter('student', ${index})"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteVoter('student', ${index})"><i class="fas fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+        
+        studentTableHTML += '</tbody></table>';
+        studentSection.innerHTML += studentTableHTML;
+        reg.appendChild(studentSection);
+      }
+      
+      // Create staff voter section
+      if (voters.staff.length > 0) {
+        const staffSection = document.createElement('div');
+        staffSection.className = 'voter-section';
+        
+        staffSection.innerHTML = `
+          <h4><i class="fas fa-chalkboard-teacher"></i> Staff Voters</h4>
+          <div class="voter-count">Total: ${voters.staff.length} staff members</div>
+        `;
+        
+        let staffTableHTML = `
+          <table class="voter-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Staff ID</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        voters.staff.forEach((v, index) => {
+          const status = v.hasVoted ? 
+            '<span class="status-badge status-voted">VOTED</span>' : 
+            '<span class="status-badge status-not-voted">NOT VOTED</span>';
+          staffTableHTML += `
+            <tr>
+              <td>${v.name}</td>
+              <td>${v.id}</td>
+              <td>${status}</td>
+              <td class="action-buttons">
+                <button class="btn btn-warning btn-sm" onclick="editVoter('staff', ${index})"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteVoter('staff', ${index})"><i class="fas fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+        
+        staffTableHTML += '</tbody></table>';
+        staffSection.innerHTML += staffTableHTML;
+        reg.appendChild(staffSection);
+      }
+    }
+
+    // Edit voter
+    function editVoter(type, index) {
+      const voter = voters[type][index];
+      const newName = prompt(`Edit ${type} voter name:`, voter.name);
+      if (newName === null) return; // User cancelled
+      
+      const newID = prompt(`Edit ${type} voter ID:`, voter.id);
+      if (newID === null) return;
+      
+      let newClass = '';
+      if (type === 'student') {
+        newClass = prompt(`Edit ${type} voter class:`, voter.class);
+        if (newClass === null) return;
+      }
+      
+      // Check if the new ID already exists (excluding the current voter)
+      const existingVoter = voters[type].find((v, i) => v.id === newID && i !== index);
+      if (existingVoter) {
+        showNotification('A voter with this ID already exists', true);
+        return;
+      }
+      
+      // Update voter
+      voter.name = newName.trim();
+      voter.id = newID.trim();
+      if (type === 'student') {
+        voter.class = newClass.trim();
+      }
+      
+      saveData();
+      showNotification(`${type} voter updated successfully`);
+      showRegistered(); // Refresh the display
+    }
+
+    // Delete voter
+    function deleteVoter(type, index) {
+      const voter = voters[type][index];
+      const confirmDelete = confirm(`Are you sure you want to delete ${voter.name} (${voter.id})?`);
+      
+      if (confirmDelete) {
+        voters[type].splice(index, 1);
+        saveData();
+        showNotification(`${type} voter deleted successfully`);
+        showRegistered(); // Refresh the display
+      }
+    }
+
+    // Show candidates with edit/delete buttons
+    function showCandidates() {
+      const candidateDiv = document.getElementById('candidateManagement');
+      candidateDiv.innerHTML = '';
+      
+      let hasCandidates = false;
+      positions.forEach(pos => {
+        if (candidates[pos].length > 0) {
+          hasCandidates = true;
+        }
+      });
+      
+      if (!hasCandidates) {
+        candidateDiv.innerHTML = '<p>No candidates added yet.</p>';
+        return;
+      }
+      
+      let tableHTML = `
+        <table class="candidate-table">
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Candidate Name</th>
+              <th>Photo</th>
+              <th>Votes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      positions.forEach(pos => {
+        candidates[pos].forEach((candidate, index) => {
+          const voteCount = votes[pos][candidate.name] || 0;
+          tableHTML += `
+            <tr>
+              <td>${pos}</td>
+              <td>${candidate.name}</td>
+              <td>${candidate.photo ? '<i class="fas fa-check-circle" style="color: var(--success);"></i>' : '<i class="fas fa-times-circle" style="color: var(--danger);"></i>'}</td>
+              <td>${voteCount}</td>
+              <td class="action-buttons">
+                <button class="btn btn-warning btn-sm" onclick="editCandidate('${pos}', ${index})"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteCandidate('${pos}', ${index})"><i class="fas fa-trash"></i> Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+      });
+      
+      tableHTML += '</tbody></table>';
+      candidateDiv.innerHTML = tableHTML;
+    }
+
+    // Edit candidate
+    function editCandidate(position, index) {
+      const candidate = candidates[position][index];
+      const newName = prompt(`Edit candidate name for ${position}:`, candidate.name);
+      if (newName === null) return; // User cancelled
+      
+      // Check if the new name already exists for this position (excluding the current candidate)
+      const existingCandidate = candidates[position].find((c, i) => c.name === newName && i !== index);
+      if (existingCandidate) {
+        showNotification('A candidate with this name already exists for this position', true);
+        return;
+      }
+      
+      // Update candidate name and votes if name changed
+      if (newName !== candidate.name) {
+        // Update votes
+        const oldVoteCount = votes[position][candidate.name] || 0;
+        votes[position][newName] = oldVoteCount;
+        delete votes[position][candidate.name];
+        
+        // Update candidate
+        candidate.name = newName.trim();
+      }
+      
+      // Ask about photo update
+      const updatePhoto = confirm('Would you like to update the candidate photo?');
+      if (updatePhoto) {
+        // Create a file input for photo update
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              candidate.photo = event.target.result;
+              saveData();
+              showNotification('Candidate updated successfully');
+              showCandidates(); // Refresh the display
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        fileInput.click();
+      } else {
+        saveData();
+        showNotification('Candidate updated successfully');
+        showCandidates(); // Refresh the display
+      }
+    }
+
+    // Delete candidate
+    function deleteCandidate(position, index) {
+      const candidate = candidates[position][index];
+      const confirmDelete = confirm(`Are you sure you want to delete ${candidate.name} from ${position}?`);
+      
+      if (confirmDelete) {
+        // Remove candidate from position
+        candidates[position].splice(index, 1);
+        
+        // Remove candidate's votes
+        delete votes[position][candidate.name];
+        
+        // Recalculate max votes for this position
+        maxVotes[position] = 0;
+        candidates[position].forEach(c => {
+          if (votes[position][c.name] > maxVotes[position]) {
+            maxVotes[position] = votes[position][c.name];
+          }
+        });
+        
+        saveData();
+        showNotification('Candidate deleted successfully');
+        showCandidates(); // Refresh the display
+      }
+    }
+
+    // Show login attempts
+    function showLoginAttempts() {
+      const attemptsDiv = document.getElementById('loginAttempts');
+      attemptsDiv.innerHTML = '';
+      
+      if (loginAttempts.length === 0) {
+        attemptsDiv.innerHTML = '<p>No login attempts recorded yet.</p>';
+        return;
+      }
+      
+      const table = document.createElement('table');
+      table.className = 'login-attempts-table';
+      
+      let tableHTML = `
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>User Type</th>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+      `;
+      
+      loginAttempts.forEach(attempt => {
+        const statusClass = attempt.status === 'success' ? 'status-success' : 'status-failed';
+        tableHTML += `
+          <tr>
+            <td>${attempt.timestamp}</td>
+            <td>${attempt.userType}</td>
+            <td>${attempt.name}</td>
+            <td>${attempt.id}</td>
+            <td class="${statusClass}">${attempt.status.toUpperCase()}</td>
+          </tr>
+        `;
+      });
+      
+      tableHTML += '</tbody>';
+      table.innerHTML = tableHTML;
+      attemptsDiv.appendChild(table);
+    }
+
+    // Download CSV data
+    function downloadCSV(type) {
+      let data = '', filename = '';
+      
+      if (type === 'voters') {
+        data = 'Type,Name,ID,Class,Has Voted\n';
+        voters.student.forEach(v => data += `Student,${v.name},${v.id},${v.class},${v.hasVoted ? 'Yes' : 'No'}\n`);
+        voters.staff.forEach(v => data += `Staff,${v.name},${v.id},,${v.hasVoted ? 'Yes' : 'No'}\n`);
+        filename = 'voters.csv';
+      } else if (type === 'candidates') {
+        data = 'Position,Candidate\n';
+        positions.forEach(p => candidates[p].forEach(c => data += `${p},${c.name}\n`));
+        filename = 'candidates.csv';
+      } else if (type === 'results') {
+        data = 'Position,Candidate,Votes\n';
+        positions.forEach(p => candidates[p].forEach(c => data += `${p},${c.name},${votes[p][c.name] || 0}\n`));
+        filename = 'results.csv';
+      }
+      
+      const blob = new Blob([data], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      
+      showNotification(`Downloaded ${filename}`);
+    }
+
+    // Download PDF
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Add logo if available
+      if (systemLogo) {
+        doc.addImage(systemLogo, 'JPEG', 10, 10, 30, 20);
+      }
+      
+      // Title
+      doc.setFontSize(20);
+      doc.text('Lukenya Voting System - Election Results', 50, 20);
+      
+      let yPosition = 40;
+      
+      positions.forEach((pos, index) => {
+        if (candidates[pos].length > 0) {
+          // Add page if needed
+          if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          // Position title
+          doc.setFontSize(16);
+          doc.text(pos, 10, yPosition);
+          yPosition += 10;
+          
+          // Candidates and votes
+          doc.setFontSize(12);
+          candidates[pos].forEach(candidate => {
+            const voteCount = votes[pos][candidate.name] || 0;
+            doc.text(`${candidate.name}: ${voteCount} votes`, 15, yPosition);
+            yPosition += 7;
+            
+            // Add candidate photo if available
+            if (candidate.photo && yPosition < 250) {
+              try {
+                doc.addImage(candidate.photo, 'JPEG', 80, yPosition - 15, 15, 15);
+              } catch (e) {
+                console.error('Error adding candidate photo:', e);
+              }
+            }
+            
+            // Check if we need a new page
+            if (yPosition > 250) {
+              doc.addPage();
+              yPosition = 20;
+            }
+          });
+          
+          yPosition += 10;
+        }
+      });
+      
+      doc.save('election_results.pdf');
+      showNotification('PDF downloaded successfully');
+    }
+
+    // Add some sample data for demonstration
+    function initializeSampleData() {
+      // Add sample voters
+      voters.student.push(
+        { name: "John", id: "ST001", class: "10A", hasVoted: false },
+        { name: "Mary", id: "ST002", class: "11B", hasVoted: false },
+        { name: "David", id: "ST003", class: "9C", hasVoted: false }
+      );
+      
+      voters.staff.push(
+        { name: "Mr. Smith", id: "T001", hasVoted: false },
+        { name: "Ms. Johnson", id: "T002", hasVoted: false }
+      );
+      
+      // Add sample candidates with placeholder photos
+      candidates["Headboy"] = [
+        { name: "Michael", photo: null },
+        { name: "James", photo: null }
+      ];
+      candidates["Headgirl"] = [
+        { name: "Sarah", photo: null },
+        { name: "Emily", photo: null }
+      ];
+      candidates["Boys' Dorm Prefect"] = [
+        { name: "Robert", photo: null },
+        { name: "Daniel", photo: null }
+      ];
+      
+      // Initialize votes for candidates
+      positions.forEach(pos => {
+        candidates[pos].forEach(c => {
+          votes[pos][c.name] = 0;
+        });
+      });
+      
+      // Add sample login attempts
+      loginAttempts.push(
+        { timestamp: new Date().toLocaleString(), userType: 'student', name: 'John', id: 'ST001', status: 'success' },
+        { timestamp: new Date().toLocaleString(), userType: 'staff', name: 'Mr. Smith', id: 'T001', status: 'success' },
+        { timestamp: new Date().toLocaleString(), userType: 'student', name: 'Unknown', id: 'ST999', status: 'failed' }
+      );
+    }
+
+    // Initialize data when page loads
+    window.onload = function() {
+      loadData();
+      
+      // If no data exists, initialize with sample data
+      if (!localStorage.getItem('lukenyaVoters')) {
+        initializeSampleData();
+        saveData();
+      }
+    };
+  </script>
+</body>
+</html>
